@@ -38,7 +38,10 @@ while (stack.Count > 0)
 
     try
     {
-        dir2s = new DirectoryInfo(dir).GetDirectories();
+        if (string.IsNullOrEmpty(dir))
+            continue;
+
+        dir2s = new DirectoryInfo(dir).GetDirectories().Where(d => !string.IsNullOrWhiteSpace(d.FullName) && !d.Name.StartsWith(".")).ToArray();
     }
     catch (Exception ex)
     {
@@ -50,7 +53,7 @@ while (stack.Count > 0)
 
     var dirNames = dir2s.Select(d => d.Name).ToArray();
 
-    if (dirNames.Contains("Library") && File.Exists($"{dir}\\{Path.GetFileName(dir)}.sln"))
+    if (dirNames.Contains("Library") && File.Exists($"{dir}{Path.DirectorySeparatorChar}{Path.GetFileName(dir)}.sln"))
     {
         Console.WriteLine();
         Console.Write($"Delete {dir}/Library (Y/N)? ");
